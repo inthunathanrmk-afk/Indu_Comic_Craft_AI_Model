@@ -1,0 +1,1459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="description"
+        content="ComicCraft AI - Create personalized AI-powered comics."
+    >
+
+    <title>ComicCraft AI</title>
+
+    <style>
+        /* =====================================================
+           GLOBAL
+        ===================================================== */
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --background: #0b0b12;
+            --surface: #151521;
+            --surface-light: #202030;
+            --primary: #7c5cff;
+            --primary-hover: #6848e8;
+            --secondary: #ff4d8d;
+            --text: #ffffff;
+            --muted: #a7a7b5;
+            --border: #2d2d3d;
+            --danger: #ff5c5c;
+            --success: #49d17d;
+            --shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+        }
+
+        body {
+            font-family:
+                Inter,
+                system-ui,
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                sans-serif;
+
+            background:
+                radial-gradient(
+                    circle at top left,
+                    rgba(124, 92, 255, 0.18),
+                    transparent 35%
+                ),
+                radial-gradient(
+                    circle at top right,
+                    rgba(255, 77, 141, 0.12),
+                    transparent 30%
+                ),
+                var(--background);
+
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        button,
+        input,
+        textarea,
+        select {
+            font: inherit;
+        }
+
+        /* =====================================================
+           HEADER
+        ===================================================== */
+
+        header {
+            border-bottom: 1px solid var(--border);
+            background: rgba(11, 11, 18, 0.88);
+            backdrop-filter: blur(15px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .navbar {
+            width: min(1200px, 92%);
+            margin: auto;
+
+            min-height: 72px;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+
+            font-size: 1.35rem;
+            font-weight: 800;
+        }
+
+        .logo-icon {
+            width: 42px;
+            height: 42px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 12px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    var(--primary),
+                    var(--secondary)
+                );
+
+            font-size: 1.4rem;
+        }
+
+        .logo span {
+            background:
+                linear-gradient(
+                    90deg,
+                    #ffffff,
+                    #bcaeff
+                );
+
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .nav-badge {
+            padding: 7px 13px;
+
+            border: 1px solid var(--border);
+            border-radius: 20px;
+
+            color: var(--muted);
+            font-size: 0.8rem;
+        }
+
+        /* =====================================================
+           MAIN
+        ===================================================== */
+
+        main {
+            width: min(1200px, 92%);
+            margin: auto;
+            padding: 60px 0 80px;
+        }
+
+        .hero {
+            text-align: center;
+            margin-bottom: 45px;
+        }
+
+        .hero-badge {
+            display: inline-block;
+
+            padding: 7px 14px;
+            margin-bottom: 18px;
+
+            border: 1px solid rgba(124, 92, 255, 0.35);
+            border-radius: 30px;
+
+            background: rgba(124, 92, 255, 0.08);
+
+            color: #bcaeff;
+            font-size: 0.85rem;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.3rem, 6vw, 4.5rem);
+            line-height: 1.05;
+            margin-bottom: 20px;
+        }
+
+        .gradient-text {
+            background:
+                linear-gradient(
+                    90deg,
+                    #9a83ff,
+                    #ff69a2
+                );
+
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .hero p {
+            max-width: 720px;
+            margin: auto;
+
+            color: var(--muted);
+            line-height: 1.7;
+            font-size: 1.05rem;
+        }
+
+        /* =====================================================
+           GENERATOR
+        ===================================================== */
+
+        .generator {
+            display: grid;
+            grid-template-columns: 420px 1fr;
+            gap: 28px;
+            align-items: start;
+        }
+
+        .card {
+            background: rgba(21, 21, 33, 0.9);
+
+            border: 1px solid var(--border);
+            border-radius: 20px;
+
+            box-shadow: var(--shadow);
+        }
+
+        .form-card {
+            padding: 28px;
+            position: sticky;
+            top: 100px;
+        }
+
+        .card-title {
+            font-size: 1.3rem;
+            font-weight: 750;
+            margin-bottom: 7px;
+        }
+
+        .card-subtitle {
+            color: var(--muted);
+            font-size: 0.88rem;
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        label {
+            display: block;
+
+            margin-bottom: 8px;
+
+            color: #e7e7ef;
+            font-size: 0.88rem;
+            font-weight: 600;
+        }
+
+        input,
+        textarea,
+        select {
+            width: 100%;
+
+            border: 1px solid var(--border);
+            border-radius: 11px;
+
+            padding: 12px 14px;
+
+            background: #10101a;
+            color: var(--text);
+
+            outline: none;
+
+            transition:
+                border-color 0.2s,
+                box-shadow 0.2s;
+        }
+
+        textarea {
+            min-height: 125px;
+            resize: vertical;
+        }
+
+        input::placeholder,
+        textarea::placeholder {
+            color: #686878;
+        }
+
+        input:focus,
+        textarea:focus,
+        select:focus {
+            border-color: var(--primary);
+
+            box-shadow:
+                0 0 0 3px rgba(
+                    124,
+                    92,
+                    255,
+                    0.12
+                );
+        }
+
+        select {
+            cursor: pointer;
+        }
+
+        .generate-btn {
+            width: 100%;
+
+            margin-top: 8px;
+            padding: 14px 18px;
+
+            border: none;
+            border-radius: 12px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    var(--primary),
+                    var(--secondary)
+                );
+
+            color: white;
+
+            font-weight: 750;
+            cursor: pointer;
+
+            transition:
+                transform 0.2s,
+                opacity 0.2s;
+        }
+
+        .generate-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .generate-btn:disabled {
+            opacity: 0.55;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* =====================================================
+           PREVIEW
+        ===================================================== */
+
+        .preview-card {
+            padding: 28px;
+            min-height: 550px;
+        }
+
+        .preview-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            gap: 15px;
+
+            margin-bottom: 25px;
+        }
+
+        .preview-title {
+            font-size: 1.35rem;
+            font-weight: 750;
+        }
+
+        .preview-status {
+            padding: 6px 11px;
+
+            border-radius: 20px;
+
+            background: rgba(
+                73,
+                209,
+                125,
+                0.1
+            );
+
+            color: var(--success);
+
+            font-size: 0.78rem;
+        }
+
+        /* =====================================================
+           EMPTY STATE
+        ===================================================== */
+
+        .empty-state {
+            min-height: 450px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            text-align: center;
+        }
+
+        .empty-content {
+            max-width: 430px;
+        }
+
+        .empty-icon {
+            width: 85px;
+            height: 85px;
+
+            margin: 0 auto 20px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 24px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    rgba(124, 92, 255, 0.2),
+                    rgba(255, 77, 141, 0.15)
+                );
+
+            font-size: 2.4rem;
+        }
+
+        .empty-state h3 {
+            margin-bottom: 10px;
+        }
+
+        .empty-state p {
+            color: var(--muted);
+            line-height: 1.6;
+        }
+
+        /* =====================================================
+           ERROR
+        ===================================================== */
+
+        .error-box {
+            padding: 14px 16px;
+            margin-bottom: 20px;
+
+            border: 1px solid rgba(
+                255,
+                92,
+                92,
+                0.3
+            );
+
+            border-radius: 10px;
+
+            background: rgba(
+                255,
+                92,
+                92,
+                0.08
+            );
+
+            color: #ff9b9b;
+
+            line-height: 1.5;
+        }
+
+        /* =====================================================
+           LOADING
+        ===================================================== */
+
+        .loading {
+            display: none;
+
+            min-height: 450px;
+
+            align-items: center;
+            justify-content: center;
+
+            text-align: center;
+        }
+
+        .loading.active {
+            display: flex;
+        }
+
+        .spinner {
+            width: 52px;
+            height: 52px;
+
+            margin: 0 auto 20px;
+
+            border: 4px solid #29293a;
+            border-top-color: var(--primary);
+
+            border-radius: 50%;
+
+            animation: spin 0.9s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .loading h3 {
+            margin-bottom: 8px;
+        }
+
+        .loading p {
+            color: var(--muted);
+        }
+
+        /* =====================================================
+           COMIC
+        ===================================================== */
+
+        .comic-result {
+            display: none;
+        }
+
+        .comic-result.active {
+            display: block;
+        }
+
+        .comic-title {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .comic-description {
+            color: var(--muted);
+            line-height: 1.7;
+            margin-bottom: 28px;
+        }
+
+        .comic-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+
+            margin-bottom: 28px;
+        }
+
+        .meta-item {
+            padding: 7px 11px;
+
+            border-radius: 20px;
+
+            background: var(--surface-light);
+            border: 1px solid var(--border);
+
+            color: #d4d4df;
+            font-size: 0.78rem;
+        }
+
+        /* =====================================================
+           PANELS
+        ===================================================== */
+
+        .panels {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 22px;
+        }
+
+        .panel {
+            overflow: hidden;
+
+            border: 1px solid var(--border);
+            border-radius: 15px;
+
+            background: #10101a;
+
+            box-shadow:
+                0 12px 35px rgba(
+                    0,
+                    0,
+                    0,
+                    0.25
+                );
+        }
+
+        .panel-number {
+            padding: 8px 12px;
+
+            background: #1c1c2a;
+
+            color: #aaaabc;
+
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+
+        .panel-image {
+            width: 100%;
+            aspect-ratio: 16 / 10;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #222235,
+                    #161623
+                );
+
+            overflow: hidden;
+        }
+
+        .panel-image img {
+            width: 100%;
+            height: 100%;
+
+            object-fit: cover;
+        }
+
+        .placeholder-image {
+            color: #77778a;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .panel-body {
+            padding: 17px;
+        }
+
+        .panel-title {
+            font-weight: 750;
+            margin-bottom: 9px;
+        }
+
+        .panel-description {
+            color: #b6b6c5;
+            font-size: 0.88rem;
+            line-height: 1.6;
+            margin-bottom: 14px;
+        }
+
+        .dialogue {
+            padding: 12px;
+
+            border-left: 3px solid var(--primary);
+            border-radius: 7px;
+
+            background: rgba(
+                124,
+                92,
+                255,
+                0.07
+            );
+
+            color: #e2defe;
+
+            font-size: 0.85rem;
+            line-height: 1.5;
+        }
+
+        /* =====================================================
+           ACTIONS
+        ===================================================== */
+
+        .actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+
+            margin-top: 30px;
+        }
+
+        .action-btn {
+            border: 1px solid var(--border);
+            border-radius: 10px;
+
+            padding: 11px 16px;
+
+            background: var(--surface-light);
+            color: white;
+
+            cursor: pointer;
+
+            text-decoration: none;
+
+            transition: 0.2s;
+        }
+
+        .action-btn:hover {
+            border-color: var(--primary);
+            transform: translateY(-1px);
+        }
+
+        .action-btn.primary {
+            border: none;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    var(--primary),
+                    var(--secondary)
+                );
+        }
+
+        /* =====================================================
+           FOOTER
+        ===================================================== */
+
+        footer {
+            border-top: 1px solid var(--border);
+
+            padding: 25px 0;
+
+            text-align: center;
+
+            color: #707080;
+            font-size: 0.82rem;
+        }
+
+        /* =====================================================
+           RESPONSIVE
+        ===================================================== */
+
+        @media (max-width: 950px) {
+
+            .generator {
+                grid-template-columns: 1fr;
+            }
+
+            .form-card {
+                position: static;
+            }
+        }
+
+        @media (max-width: 650px) {
+
+            main {
+                padding-top: 35px;
+            }
+
+            .navbar {
+                min-height: 62px;
+            }
+
+            .nav-badge {
+                display: none;
+            }
+
+            .form-card,
+            .preview-card {
+                padding: 20px;
+            }
+
+            .panels {
+                grid-template-columns: 1fr;
+            }
+
+            .preview-header {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- =====================================================
+         HEADER
+    ====================================================== -->
+
+    <header>
+        <nav class="navbar">
+
+            <div class="logo">
+                <div class="logo-icon">📖</div>
+                <span>ComicCraft AI</span>
+            </div>
+
+            <div class="nav-badge">
+                Powered by Generative AI
+            </div>
+
+        </nav>
+    </header>
+
+
+    <!-- =====================================================
+         MAIN
+    ====================================================== -->
+
+    <main>
+
+        <!-- HERO -->
+
+        <section class="hero">
+
+            <div class="hero-badge">
+                ✨ AI Comic Story Creator
+            </div>
+
+            <h1>
+                Turn Your Ideas Into
+                <span class="gradient-text">
+                    Comics
+                </span>
+            </h1>
+
+            <p>
+                Create personalized comic stories with AI.
+                Describe your idea, choose your character,
+                setting, tone and art style, and let
+                ComicCraft build your story panel by panel.
+            </p>
+
+        </section>
+
+
+        <!-- GENERATOR -->
+
+        <section class="generator">
+
+
+            <!-- =================================================
+                 FORM
+            ================================================== -->
+
+            <div class="card form-card">
+
+                <div class="card-title">
+                    Create Your Comic
+                </div>
+
+                <div class="card-subtitle">
+                    Give ComicCraft a few details about your story.
+                </div>
+
+
+                <form
+                    id="comicForm"
+                    action="/generate"
+                    method="POST"
+                >
+
+
+                    <!-- STORY PROMPT -->
+
+                    <div class="form-group">
+
+                        <label for="story_prompt">
+                            Story Prompt
+                        </label>
+
+                        <textarea
+                            id="story_prompt"
+                            name="story_prompt"
+                            placeholder="Example: A brave fox exploring an enchanted forest..."
+                            required
+                        ></textarea>
+
+                    </div>
+
+
+                    <!-- CHARACTER -->
+
+                    <div class="form-group">
+
+                        <label for="character_name">
+                            Main Character
+                        </label>
+
+                        <input
+                            type="text"
+                            id="character_name"
+                            name="character_name"
+                            placeholder="Example: Luna"
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- SETTING -->
+
+                    <div class="form-group">
+
+                        <label for="setting">
+                            Setting
+                        </label>
+
+                        <input
+                            type="text"
+                            id="setting"
+                            name="setting"
+                            placeholder="Example: Enchanted Forest"
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- TONE -->
+
+                    <div class="form-group">
+
+                        <label for="tone">
+                            Tone
+                        </label>
+
+                        <select
+                            id="tone"
+                            name="tone"
+                            required
+                        >
+
+                            <option value="">
+                                Select tone
+                            </option>
+
+                            <option value="funny">
+                                Funny
+                            </option>
+
+                            <option value="adventure">
+                                Adventure
+                            </option>
+
+                            <option value="dramatic">
+                                Dramatic
+                            </option>
+
+                            <option value="mysterious">
+                                Mysterious
+                            </option>
+
+                            <option value="romantic">
+                                Romantic
+                            </option>
+
+                            <option value="dark">
+                                Dark
+                            </option>
+
+                            <option value="inspiring">
+                                Inspiring
+                            </option>
+
+                            <option value="fantasy">
+                                Fantasy
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- ART STYLE -->
+
+                    <div class="form-group">
+
+                        <label for="art_style">
+                            Art Style
+                        </label>
+
+                        <select
+                            id="art_style"
+                            name="art_style"
+                            required
+                        >
+
+                            <option value="">
+                                Select art style
+                            </option>
+
+                            <option value="comic book">
+                                Comic Book
+                            </option>
+
+                            <option value="anime">
+                                Anime
+                            </option>
+
+                            <option value="manga">
+                                Manga
+                            </option>
+
+                            <option value="cartoon">
+                                Cartoon
+                            </option>
+
+                            <option value="watercolor">
+                                Watercolor
+                            </option>
+
+                            <option value="digital art">
+                                Digital Art
+                            </option>
+
+                            <option value="fantasy illustration">
+                                Fantasy Illustration
+                            </option>
+
+                            <option value="cinematic">
+                                Cinematic
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- BUTTON -->
+
+                    <button
+                        type="submit"
+                        class="generate-btn"
+                        id="generateButton"
+                    >
+                        ✨ Generate Comic
+                    </button>
+
+                </form>
+
+            </div>
+
+
+            <!-- =================================================
+                 PREVIEW
+            ================================================== -->
+
+            <div class="card preview-card">
+
+                <div class="preview-header">
+
+                    <div class="preview-title">
+                        Comic Preview
+                    </div>
+
+                    <div class="preview-status">
+                        Ready
+                    </div>
+
+                </div>
+
+
+                <!-- ERROR -->
+
+                {% if error %}
+
+                <div class="error-box">
+                    ⚠️ {{ error }}
+                </div>
+
+                {% endif %}
+
+
+                <!-- LOADING -->
+
+                <div
+                    class="loading"
+                    id="loading"
+                >
+
+                    <div>
+
+                        <div class="spinner"></div>
+
+                        <h3>
+                            Creating your comic...
+                        </h3>
+
+                        <p>
+                            Gemini is writing your story.
+                            Please wait.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <!-- EMPTY STATE -->
+
+                {% if not comic %}
+
+                <div
+                    class="empty-state"
+                    id="emptyState"
+                >
+
+                    <div class="empty-content">
+
+                        <div class="empty-icon">
+                            🎨
+                        </div>
+
+                        <h3>
+                            Your comic will appear here
+                        </h3>
+
+                        <p>
+                            Enter your story details on the left
+                            and click
+                            <strong>Generate Comic</strong>
+                            to begin.
+                        </p>
+
+                    </div>
+
+                </div>
+
+                {% endif %}
+
+
+                <!-- =================================================
+                     GENERATED COMIC
+                ================================================== -->
+
+                {% if comic %}
+
+                <div class="comic-result active">
+
+                    <!-- TITLE -->
+
+                    <h2 class="comic-title">
+                        {{ comic.title }}
+                    </h2>
+
+
+                    <!-- DESCRIPTION -->
+
+                    {% if comic.description %}
+
+                    <p class="comic-description">
+                        {{ comic.description }}
+                    </p>
+
+                    {% endif %}
+
+
+                    <!-- META -->
+
+                    <div class="comic-meta">
+
+                        {% if comic.character_name %}
+
+                        <div class="meta-item">
+                            👤 {{ comic.character_name }}
+                        </div>
+
+                        {% endif %}
+
+                        {% if comic.setting %}
+
+                        <div class="meta-item">
+                            🌍 {{ comic.setting }}
+                        </div>
+
+                        {% endif %}
+
+                        {% if comic.tone %}
+
+                        <div class="meta-item">
+                            🎭 {{ comic.tone }}
+                        </div>
+
+                        {% endif %}
+
+                        {% if comic.art_style %}
+
+                        <div class="meta-item">
+                            🎨 {{ comic.art_style }}
+                        </div>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <!-- PANELS -->
+
+                    {% if comic.panels %}
+
+                    <div class="panels">
+
+                        {% for panel in comic.panels %}
+
+                        <article class="panel">
+
+                            <div class="panel-number">
+                                PANEL {{ loop.index }}
+                            </div>
+
+
+                            <div class="panel-image">
+
+                                {% if panel.image_url %}
+
+                                <img
+                                    src="{{ panel.image_url }}"
+                                    alt="{{ panel.title | default('Comic panel') }}"
+                                >
+
+                                {% else %}
+
+                                <div class="placeholder-image">
+                                    🎨
+                                    <br>
+                                    Illustration will appear here
+                                </div>
+
+                                {% endif %}
+
+                            </div>
+
+
+                            <div class="panel-body">
+
+                                {% if panel.title %}
+
+                                <h3 class="panel-title">
+                                    {{ panel.title }}
+                                </h3>
+
+                                {% endif %}
+
+
+                                {% if panel.description %}
+
+                                <p class="panel-description">
+                                    {{ panel.description }}
+                                </p>
+
+                                {% endif %}
+
+
+                                {% if panel.narration %}
+
+                                <div class="dialogue">
+                                    <strong>Narration:</strong>
+                                    {{ panel.narration }}
+                                </div>
+
+                                {% endif %}
+
+
+                                {% if panel.dialogue %}
+
+                                <div
+                                    class="dialogue"
+                                    style="margin-top: 8px;"
+                                >
+                                    <strong>Dialogue:</strong>
+                                    {{ panel.dialogue }}
+                                </div>
+
+                                {% endif %}
+
+                            </div>
+
+                        </article>
+
+                        {% endfor %}
+
+                    </div>
+
+                    {% endif %}
+
+
+                    <!-- ACTIONS -->
+
+                    <div class="actions">
+
+                        {% if comic.pdf_url %}
+
+                        <a
+                            href="{{ comic.pdf_url }}"
+                            class="action-btn primary"
+                            target="_blank"
+                        >
+                            📄 Download PDF
+                        </a>
+
+                        {% endif %}
+
+                        <button
+                            type="button"
+                            class="action-btn"
+                            onclick="window.print()"
+                        >
+                            🖨️ Print Comic
+                        </button>
+
+                        <button
+                            type="button"
+                            class="action-btn"
+                            onclick="createAnotherComic()"
+                        >
+                            ✨ Create Another
+                        </button>
+
+                    </div>
+
+                </div>
+
+                {% endif %}
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- =====================================================
+         FOOTER
+    ====================================================== -->
+
+    <footer>
+
+        <p>
+            ComicCraft AI &copy; 2026
+            · AI-powered comic creation
+        </p>
+
+    </footer>
+
+
+    <!-- =====================================================
+         JAVASCRIPT
+    ====================================================== -->
+
+    <script>
+
+        const comicForm =
+            document.getElementById("comicForm");
+
+        const loading =
+            document.getElementById("loading");
+
+        const generateButton =
+            document.getElementById("generateButton");
+
+
+        /*
+         * Show loading state when the user submits
+         * the comic generation form.
+         */
+
+        if (comicForm) {
+
+            comicForm.addEventListener(
+                "submit",
+                function () {
+
+                    if (loading) {
+                        loading.classList.add("active");
+                    }
+
+                    if (generateButton) {
+
+                        generateButton.disabled = true;
+
+                        generateButton.innerHTML =
+                            "⏳ Creating Comic...";
+                    }
+
+                }
+            );
+
+        }
+
+
+        /*
+         * Reset the form so the user can create
+         * another comic.
+         */
+
+        function createAnotherComic() {
+
+            window.scrollTo({
+                top: 0,
+                behavior: "smooth"
+            });
+
+            if (comicForm) {
+                comicForm.reset();
+            }
+
+            setTimeout(
+                function () {
+
+                    const prompt =
+                        document.getElementById(
+                            "story_prompt"
+                        );
+
+                    if (prompt) {
+                        prompt.focus();
+                    }
+
+                },
+                500
+            );
+        }
+
+    </script>
+
+
+    <!-- =====================================================
+         PRINT STYLES
+    ====================================================== -->
+
+    <style>
+
+        @media print {
+
+            header,
+            footer,
+            .form-card,
+            .actions,
+            .preview-header {
+                display: none !important;
+            }
+
+            body {
+                background: white;
+                color: black;
+            }
+
+            main {
+                width: 100%;
+                padding: 0;
+            }
+
+            .preview-card {
+                border: none;
+                box-shadow: none;
+            }
+
+            .panels {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .panel {
+                break-inside: avoid;
+                border: 1px solid #ccc;
+            }
+
+        }
+
+    </style>
+
+</body>
+</html>
